@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Nexus Retail | Executive Dashboard 2026</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f0f4f9;
+            --bg-secondary: #ffffff;
+            --card-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --accent-primary: #0f5c7a;
+            --accent-secondary: #1a7f9e;
+            --accent-gold: #c6a43b;
+            --accent-dark: #0a3d52;
+            --accent-light: #eef4fc;
+            --text-primary: #1a2e3f;
+            --text-secondary: #4a627a;
+            --text-tertiary: #7c8ea0;
+            --success: #0e8f5e;
+            --success-light: #e3f5ed;
+            --warning: #e67e22;
+            --warning-light: #fef3e8;
+            --danger: #c0392b;
+            --info: #3b82f6;
+            --info-light: #eef2ff;
+            --border-light: #eef2f6;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+            --radius-card: 24px;
+            --radius-element: 14px;
+            --transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        body {
+            background: var(--bg-primary);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .app-shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-light);
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 50;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 48px;
+            padding: 0 12px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .brand-icon i {
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .brand-text h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+        }
+
+        .brand-text p {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            letter-spacing: 0.3px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            border-radius: var(--radius-element);
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-item i {
+            width: 22px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: var(--accent-light);
+            color: var(--accent-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            font-weight: 600;
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 32px 40px;
+        }
+
+        .exec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-title .badge-page {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .date-badge {
+            background: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+
+        .kpi-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .kpi-trend {
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+
+        .insight-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .card-header h3 i {
+            margin-right: 10px;
+            color: var(--accent-primary);
+        }
+
+        .card-body {
+            padding: 24px 28px;
+        }
+
+        /* MATRIZ DE CUSTOS MELHORADA */
+        .cost-matrix {
+            overflow-x: auto;
+        }
+
+        .exec-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .exec-table th {
+            text-align: left;
+            padding: 16px 12px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .exec-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .exec-table tr:hover td {
+            background: var(--accent-light);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-high {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-mid {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .cost-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .cost-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--accent-primary);
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-box {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-light);
+            padding: 20px;
+        }
+
+        .chart-box h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        /* GRID DE 4 GRÁFICOS */
+        .quad-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 1200px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .quad-grid { grid-template-columns: 1fr; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .charts-row { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            aside {
+                width: 70px;
+                padding: 24px 12px;
+            }
+            .brand-text, .nav-item span { display: none; }
+            .nav-item { justify-content: center; padding: 14px; }
+            .nav-item i { margin: 0; font-size: 1.2rem; }
+            main { margin-left: 70px; padding: 20px; }
+            .kpi-grid { grid-template-columns: 1fr; }
+        }
+
+        .exec-footer {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        .tab-view {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <aside>
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fas fa-chart-network"></i>
+            </div>
+            <div class="brand-text">
+                <h2>NEXUS RETAIL</h2>
+                <p>Executive Dashboard</p>
+            </div>
+        </div>
+        <nav>
+            <div class="nav-item active" data-tab="recovery">
+                <i class="fas fa-chart-line"></i> <span>Recuperação</span>
+            </div>
+            <div class="nav-item" data-tab="global">
+                <i class="fas fa-globe"></i> <span>Global Trade</span>
+            </div>
+            <div class="nav-item" data-tab="strategy">
+                <i class="fas fa-chess-queen"></i> <span>Estratégia</span>
+            </div>
+        </nav>
+    </aside>
+
+    <main>
+        <!-- ========== RECUPERAÇÃO DE CAPITAL ========== -->
+        <section id="recovery" class="tab-view active">
+            <div class="exec-header">
+                <div class="page-title">
+                    <div class="badge-page">Capital Recovery Unit</div>
+                    <h1>Recuperação de Capital</h1>
+                </div>
+                <div class="date-badge">
+                    <i class="far fa-calendar-alt"></i> 2024-2026 · Consolidated
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Recuperado</div>
+                    <div class="kpi-value" id="totalRecovered">R$ 0</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +96.2% eficiência</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Estoque Remanescente</div>
+                    <div class="kpi-value" style="color: var(--success);">0%</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-check-circle"></i> Escoamento total</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Risco Mitigado</div>
+                    <div class="kpi-value" style="color: var(--success);">R$ 210k</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-shield-alt"></i> Perda evitada</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">ROI da Operação</div>
+                    <div class="kpi-value" style="color: var(--accent-primary);">3.2x</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-chart-line"></i> +120% vs meta</div>
+                </div>
+            </div>
+
+            <!-- GRÁFICO: Performance por Canal de Recuperação -->
+            <div class="insight-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-bar"></i> Performance por Canal de Recuperação</h3>
+                    <span class="status-badge status-high"><i class="fas fa-chart-simple"></i> Liquidação: 55% do total</span>
+                </div>
+                <div class="card-body">
+                    <div style="height: 340px;">
+                        <canvas id="recoveryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRID: Evolução Semanal + Distribuição -->
+            <div class="quad-grid">
+                <div class="chart-box">
+                    <h4><i class="fas fa-chart-line"></i> Evolução Semanal da Recuperação (R$ mil)</h4>
+                    <div class="chart-container">
+                        <canvas id="weeklyEvolutionChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <h4><i class="fas fa-chart-pie"></i> Distribuição por Canal</h4>
+                    <div class="chart-container">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRÁFICO ADICIONAL: Comparativo de Canais -->
+            <div class="insight-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-simple"></i> Comparativo Detalhado por Canal</h3>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="channelComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== GLOBAL TRADE ========== -->
+        <section id="global" class="tab-view">
+            <div class="exec-header">
+                <div class="page-title">
+                    <div class="badge-page">Trade & Compliance</div>
+                    <h1>Global Trade Intelligence</h1>
+                </div>
+                <div class="date-badge">
+                    <i class="fas fa-ship"></i> Projeções 2026
+                </div>
+            </div>
+
+            <!-- MATRIZ DE CUSTOS POR PAÍS MELHORADA -->
+            <div class="insight-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-table-list"></i> Matriz de Custos por País · Análise Detalhada</h3>
+                    <span class="status-badge status-high"><i class="fas fa-rocket"></i> Rota ótima: Chile + Noruega</span>
+                </div>
+                <div class="card-body cost-matrix">
+                    <table class="exec-table">
+                        <thead>
+                            <tr>
+                                <th>País</th>
+                                <th>Duty (%)</th>
+                                <th>VAT (%)</th>
+                                <th>Frete (R$/kg)</th>
+                                <th>Taxas Adicionais</th>
+                                <th>Carga Tributária</th>
+                                <th>Custo Total (R$/kg)</th>
+                                <th>Benchmark</th>
+                                <th>Viabilidade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="taxTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- GRID: Comparativo de Impostos + Frete por Destino -->
+            <div class="comparison-grid">
+                <div class="chart-box">
+                    <h4><i class="fas fa-percent"></i> Comparativo de Impostos (Duty + VAT)</h4>
+                    <div class="chart-container">
+                        <canvas id="taxComparisonChart"></canvas>
+                    </div>
+                    <div style="margin-top: 16px; font-size: 0.7rem; color: var(--text-tertiary); text-align: center;">
+                        Dubai apresenta menor carga tributária (10%), seguido por Brasil (18%)
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <h4><i class="fas fa-truck-fast"></i> Frete por Destino (R$/kg) · Projeção 2026</h4>
+                    <div class="chart-container">
+                        <canvas id="freightChart"></canvas>
+                    </div>
+                    <div style="margin-top: 16px; font-size: 0.7rem; color: var(--text-tertiary); text-align: center;">
+                        Menor frete: Chile (R$ 9,50) · Maior frete: Dubai (R$ 21,00)
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRÁFICO ADICIONAL: Custo Total por Destino -->
+            <div class="insight-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-line"></i> Custo Total por Destino (R$/kg) · Análise Comparativa</h3>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="totalCostChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ESTRATÉGIA ========== -->
+        <section id="strategy" class="tab-view">
+            <div class="exec-header">
+                <div class="page-title">
+                    <div class="badge-page">Strategic Roadmap</div>
+                    <h1>Estratégia 2026</h1>
+                </div>
+                <div class="date-badge">
+                    <i class="fas fa-rocket"></i> Plano 2025-2026
+                </div>
+            </div>
+
+            <div class="insight-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-timeline"></i> Jornada Estratégica</h3>
+                </div>
+                <div class="card-body" id="strategyContent">
+                    <p style="color: var(--text-secondary);">Carregando...</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="exec-footer">
+            <i class="fas fa-lock"></i> Dados confidenciais · Nexus Retail Intelligence · Projeções 2026
+        </div>
+    </main>
+</div>
+
+<script>
+    (function() {
+        // DADOS ENRIQUECIDOS
+        const totalRecoveredValue = 134700;
+        
+        const countriesData = [
+            { country: 'Chile', duty: 6, vat: 19, freight: 9.50, additional: 2.5, totalTax: 25, totalCost: 37.00, benchmark: 28, status: 'high' },
+            { country: 'Noruega', duty: 0, vat: 25, freight: 19.20, additional: 3.0, totalTax: 25, totalCost: 47.20, benchmark: 35, status: 'high' },
+            { country: 'Dubai (UAE)', duty: 5, vat: 5, freight: 21.00, additional: 1.5, totalTax: 10, totalCost: 32.50, benchmark: 22, status: 'high' },
+            { country: 'Brasil', duty: 0, vat: 18, freight: 12.00, additional: 4.0, totalTax: 18, totalCost: 34.00, benchmark: 30, status: 'mid' }
+        ];
+
+        const strategySteps = [
+            { step: 1, title: '🧠 O Problema Humano', desc: 'Inverno atípico +4°C gerou 70% de estoque parado. Equipe de compras sem dados climáticos preditivos.', timeline: 'Diagnóstico · Concluído 2024' },
+            { step: 2, title: '📉 Impacto Financeiro', desc: 'Prejuízo potencial de R$ 210.000, ameaça ao fluxo de caixa e queima de margem operacional.', timeline: 'Análise · Concluído 2024' },
+            { step: 3, title: '⚡ Execução Tática', desc: 'Liquidação relâmpago + parcerias B2B recuperaram R$ 73.500 em 14 dias.', timeline: 'Operação · Concluído 2024' },
+            { step: 4, title: '🌍 Expansão Global', desc: 'Escoamento inteligente para Chile e Noruega gerou R$ 51k adicionais.', timeline: 'Expansão · Q3 2026' },
+            { step: 5, title: '🤖 Futuro Aumentado', desc: 'IA de predição climática para cortar 60% dos erros de inventário sazonal.', timeline: 'Transformação · Q2 2026' }
+        ];
+
+        // Animação do contador
+        const animateNumber = (el, target) => {
+            let current = 0;
+            const duration = 1600;
+            const stepTime = 16;
+            const steps = duration / stepTime;
+            const increment = target / steps;
+            let step = 0;
+            const timer = setInterval(() => {
+                step++;
+                current += increment;
+                if (step >= steps) {
+                    el.innerText = `R$ ${target.toLocaleString('pt-BR')}`;
+                    clearInterval(timer);
+                } else {
+                    el.innerText = `R$ ${Math.floor(current).toLocaleString('pt-BR')}`;
+                }
+            }, stepTime);
+        };
+
+        // Render Matriz de Custos melhorada
+        const renderTaxTable = () => {
+            const tbody = document.getElementById('taxTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = countriesData.map(c => {
+                const statusClass = c.status === 'high' ? 'status-high' : 'status-mid';
+                const statusText = c.status === 'high' ? 'Alta Viabilidade' : 'Potencial Médio';
+                const barWidth = (c.totalCost / 50) * 100;
+                return `
+                    <tr>
+                        <td style="font-weight: 600;">${c.country}</td>
+                        <td>${c.duty}%</td>
+                        <td>${c.vat}%</td>
+                        <td>R$ ${c.freight.toFixed(2)}</td>
+                        <td>R$ ${c.additional.toFixed(2)}</td>
+                        <td>${c.totalTax}%</td>
+                        <td>
+                            R$ ${c.totalCost.toFixed(2)}
+                            <div class="cost-bar">
+                                <div class="cost-bar-fill" style="width: ${barWidth}%;"></div>
+                            </div>
+                        </td>
+                        <td>R$ ${c.benchmark.toFixed(2)}</td>
+                        <td><span class="status-badge ${statusClass}"><i class="fas ${c.status === 'high' ? 'fa-check-circle' : 'fa-chart-line'}"></i> ${statusText}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        // Render Estratégia
+        const renderStrategy = () => {
+            const container = document.getElementById('strategyContent');
+            if (!container) return;
+            container.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    ${strategySteps.map(s => `
+                        <div style="display: flex; gap: 20px; padding: 16px; background: var(--bg-primary); border-radius: 16px;">
+                            <div style="width: 48px; height: 48px; background: var(--accent-primary); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem;">${s.step}</div>
+                            <div style="flex: 1;">
+                                <h4 style="margin-bottom: 8px;">${s.title}</h4>
+                                <p style="color: var(--text-secondary); margin-bottom: 8px;">${s.desc}</p>
+                                <div style="font-size: 0.7rem; color: var(--accent-gold);"><i class="far fa-calendar-alt"></i> ${s.timeline}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        // GRÁFICOS
+        let recoveryChart, weeklyChart, distributionChart, channelCompareChart;
+        let taxChart, freightChart, totalCostChart;
+
+        const initCharts = () => {
+            // 1. Performance por Canal de Recuperação
+            const recoveryCtx = document.getElementById('recoveryChart')?.getContext('2d');
+            if (recoveryCtx) {
+                recoveryChart = new Chart(recoveryCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Liquidação', 'Canais Globais', 'Transferência B2B', 'Parcerias'],
+                        datasets: [{
+                            label: 'Valor Recuperado (R$)',
+                            data: [73500, 22400, 28800, 10000],
+                            backgroundColor: ['#0f5c7a', '#1a7f9e', '#3a9bbe', '#7cbfd6'],
+                            borderRadius: 10,
+                            barPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: (ctx) => `R$ ${ctx.raw.toLocaleString('pt-BR')}` } } },
+                        scales: { y: { beginAtZero: true, ticks: { callback: (val) => `R$ ${val.toLocaleString('pt-BR')}` } } }
+                    }
+                });
+            }
+
+            // 2. Evolução Semanal
+            const weeklyCtx = document.getElementById('weeklyEvolutionChart')?.getContext('2d');
+            if (weeklyCtx) {
+                weeklyChart = new Chart(weeklyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Semana 5', 'Semana 6'],
+                        datasets: [{
+                            label: 'Recuperação Acumulada (R$ mil)',
+                            data: [12, 28, 52, 78, 105, 134.7],
+                            borderColor: '#0f5c7a',
+                            backgroundColor: 'rgba(15, 92, 122, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#0f5c7a',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: true,
+                        plugins: { 
+                            tooltip: { callbacks: { label: (ctx) => `R$ ${ctx.raw}k` } }
+                        }
+                    }
+                });
+            }
+
+            // 3. Distribuição por Canal (Donut)
+            const distCtx = document.getElementById('distributionChart')?.getContext('2d');
+            if (distCtx) {
+                distributionChart = new Chart(distCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Liquidação (55%)', 'B2B (21%)', 'Global (17%)', 'Parcerias (7%)'],
+                        datasets: [{
+                            data: [55, 21, 17, 7],
+                            backgroundColor: ['#0f5c7a', '#1a7f9e', '#3a9bbe', '#c6a43b'],
+                            borderWidth: 0,
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: true,
+                        plugins: { 
+                            legend: { position: 'bottom' },
+                            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}% do total` } }
+                        }
+                    }
+                });
+            }
+
+            // 4. Comparativo de Canais (Radar)
+            const channelCtx = document.getElementById('channelComparisonChart')?.getContext('2d');
+            if (channelCtx) {
+                channelCompareChart = new Chart(channelCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Velocidade', 'Margem', 'Escalabilidade', 'Custo de Aquisição', 'Sazonalidade'],
+                        datasets: [
+                            {
+                                label: 'Liquidação',
+                                data: [95, 45, 70, 30, 85],
+                                borderColor: '#0f5c7a',
+                                backgroundColor: 'rgba(15, 92, 122, 0.2)',
+                                pointBackgroundColor: '#0f5c7a'
+                            },
+                            {
+                                label: 'Canais Globais',
+                                data: [70, 75, 85, 55, 60],
+                                borderColor: '#1a7f9e',
+                                backgroundColor: 'rgba(26, 127, 158, 0.2)',
+                                pointBackgroundColor: '#1a7f9e'
+                            },
+                            {
+                                label: 'B2B',
+                                data: [65, 80, 90, 45, 70],
+                                borderColor: '#c6a43b',
+                                backgroundColor: 'rgba(198, 164, 59, 0.2)',
+                                pointBackgroundColor: '#c6a43b'
+                            }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: true }
+                });
+            }
+
+            // 5. Comparativo de Impostos (Radar)
+            const taxCtx = document.getElementById('taxComparisonChart')?.getContext('2d');
+            if (taxCtx) {
+                taxChart = new Chart(taxCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: countriesData.map(c => c.country),
+                        datasets: [{
+                            label: 'Carga Tributária Total (Duty+VAT) %',
+                            data: countriesData.map(c => c.totalTax),
+                            backgroundColor: 'rgba(15, 92, 122, 0.2)',
+                            borderColor: '#0f5c7a',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#0f5c7a',
+                            pointRadius: 5
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: true,
+                        scales: { r: { beginAtZero: true, max: 30 } },
+                        plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.raw}% de impostos totais` } } }
+                    }
+                });
+            }
+
+            // 6. Frete por Destino
+            const freightCtx = document.getElementById('freightChart')?.getContext('2d');
+            if (freightCtx) {
+                freightChart = new Chart(freightCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: countriesData.map(c => c.country),
+                        datasets: [{
+                            label: 'Frete (R$/kg)',
+                            data: countriesData.map(c => c.freight),
+                            backgroundColor: '#c6a43b',
+                            borderRadius: 8,
+                            barPercentage: 0.6
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: true,
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { title: { display: true, text: 'R$ por kg' }, beginAtZero: true } }
+                    }
+                });
+            }
+
+            // 7. Custo Total por Destino
+            const totalCostCtx = document.getElementById('totalCostChart')?.getContext('2d');
+            if (totalCostCtx) {
+                totalCostChart = new Chart(totalCostCtx, {
+                    type: 'line',
+                    data: {
+                        labels: countriesData.map(c => c.country),
+                        datasets: [
+                            {
+                                label: 'Custo Total (R$/kg)',
+                                data: countriesData.map(c => c.totalCost),
+                                borderColor: '#0f5c7a',
+                                backgroundColor: 'rgba(15, 92, 122, 0.1)',
+                                fill: true,
+                                tension: 0.3,
+                                pointRadius: 6,
+                                pointBackgroundColor: '#0f5c7a'
+                            },
+                            {
+                                label: 'Benchmark Mercado (R$/kg)',
+                                data: countriesData.map(c => c.benchmark),
+                                borderColor: '#c6a43b',
+                                borderDash: [5, 5],
+                                fill: false,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#c6a43b'
+                            }
+                        ]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: true,
+                        plugins: { tooltip: { callbacks: { label: (ctx) => `R$ ${ctx.raw.toFixed(2)}/kg` } } },
+                        scales: { y: { title: { display: true, text: 'R$ por kg' }, beginAtZero: true } }
+                    }
+                });
+            }
+        };
+
+        // TABS
+        const initTabs = () => {
+            const navs = document.querySelectorAll('.nav-item');
+            const views = document.querySelectorAll('.tab-view');
+            navs.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    navs.forEach(n => n.classList.remove('active'));
+                    btn.classList.add('active');
+                    views.forEach(v => v.classList.remove('active'));
+                    document.getElementById(tabId)?.classList.add('active');
+                    setTimeout(() => {
+                        recoveryChart?.update();
+                        weeklyChart?.update();
+                        distributionChart?.update();
+                        channelCompareChart?.update();
+                        taxChart?.update();
+                        freightChart?.update();
+                        totalCostChart?.update();
+                    }, 100);
+                });
+            });
+        };
+
+        // INIT
+        const init = () => {
+            renderTaxTable();
+            renderStrategy();
+            initCharts();
+            initTabs();
+            const moneyEl = document.getElementById('totalRecovered');
+            if (moneyEl) animateNumber(moneyEl, totalRecoveredValue);
+        };
+
+        window.addEventListener('DOMContentLoaded', init);
+    })();
+</script>
+</body>
+</html>
